@@ -1,0 +1,38 @@
+name: careerquest_flutter
+description: A Very Good Project created by Very Good CLI.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ^3.35.0
+
+dependencies:
+  authentication_repository:
+    path: packages/authentication_repository
+  bloc: ^9.0.1
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  flutter_localizations:
+    sdk: flutter
+  supabase_flutter: ^2.0.0
+  intl: ^0.20.2
+  user_repository:
+    path: packages/user_repository
+  supabase_auth_ui: ^0.5.5
+  flutter_dotenv: ^6.0.0
+
+dev_dependencies:
+  bloc_lint: ^0.3.0
+  bloc_test: ^10.0.0
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  very_good_analysis: ^10.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+    - .env
