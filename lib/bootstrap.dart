@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:careerquest_flutter/injection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -36,7 +37,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     anonKey: dotenv.get('SUPABASE_PUBLISHABLE_KEY'),
   );
 
-  // Add cross-flavor configuration here
+  await configureDependencies();
 
   runApp(await builder());
 }

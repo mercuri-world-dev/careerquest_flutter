@@ -8,8 +8,6 @@ environment:
   flutter: ^3.35.0
 
 dependencies:
-  authentication_repository:
-    path: packages/authentication_repository
   bloc: ^9.0.1
   flutter:
     sdk: flutter
@@ -18,10 +16,13 @@ dependencies:
     sdk: flutter
   supabase_flutter: ^2.0.0
   intl: ^0.20.2
-  user_repository:
-    path: packages/user_repository
   supabase_auth_ui: ^0.5.5
   flutter_dotenv: ^6.0.0
+  formz: ^0.8.0
+  equatable: ^2.0.7
+  injectable: ^2.7.1+2
+  get_it: ^9.2.0
+  build_runner: ^2.10.4
 
 dev_dependencies:
   bloc_lint: ^0.3.0

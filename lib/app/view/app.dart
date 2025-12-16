@@ -1,7 +1,10 @@
-import 'package:authentication_repository/authentication_repository.dart';
-import 'package:careerquest_flutter/authentication/bloc/authentication_bloc.dart';
-import 'package:careerquest_flutter/counter/counter.dart';
+import 'package:careerquest_flutter/authentication/data/authentication_repository_impl.dart';
+import 'package:careerquest_flutter/authentication/domain/authentication_repository.dart';
+import 'package:careerquest_flutter/authentication/presentation/bloc/authentication_bloc.dart';
+import 'package:careerquest_flutter/home/view/home_page.dart';
 import 'package:careerquest_flutter/l10n/l10n.dart';
+import 'package:careerquest_flutter/login/view/login_page.dart';
+import 'package:careerquest_flutter/splash/view/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
@@ -13,9 +16,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(
-          create: (_) => AuthenticationRepository(),
-          dispose: (repository) => repository.dispose()
+        RepositoryProvider<AuthenticationRepository>(
+          create: (_) => AuthenticationRepositoryImpl()
         ),
         RepositoryProvider(create: (_) => UserRepository())
       ],
@@ -39,7 +41,10 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  NavigatorState get _navigator => _navigatorKey.currentState!;  
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
