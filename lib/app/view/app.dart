@@ -1,34 +1,21 @@
-import 'package:careerquest_flutter/authentication/data/authentication_repository_impl.dart';
-import 'package:careerquest_flutter/authentication/domain/authentication_repository.dart';
-import 'package:careerquest_flutter/authentication/presentation/bloc/authentication_bloc.dart';
-import 'package:careerquest_flutter/home/view/home_page.dart';
+import 'package:careerquest_flutter/core/di/injection.dart';
+import 'package:careerquest_flutter/core/router/app_router.dart';
+import 'package:careerquest_flutter/features/authentication/presentation/bloc/authentication_bloc.dart';
 import 'package:careerquest_flutter/l10n/l10n.dart';
-import 'package:careerquest_flutter/login/view/login_page.dart';
-import 'package:careerquest_flutter/splash/view/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:user_repository/user_repository.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<AuthenticationRepository>(
-          create: (_) => AuthenticationRepositoryImpl()
-        ),
-        RepositoryProvider(create: (_) => UserRepository())
-      ],
-      child: BlocProvider(
-        lazy: false,
-        create: (context) => AuthenticationBloc(
-          authenticationRepository: context.read<AuthenticationRepository>(),
-          userRepository: context.read<UserRepository>(),
-        )..add(AuthenticationSubscriptionRequested()),
-        child: const AppView(),
-      )
+    return BlocProvider(
+      lazy: false,
+      create: (context) =>
+          getIt<AuthenticationBloc>()
+            ..add(AuthenticationSubscriptionRequested()),
+      child: const AppView(),
     );
   }
 }
@@ -41,35 +28,18 @@ class AppView extends StatefulWidget {
 }
 
 class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
+  late final AppRouter _appRouter;
 
-  NavigatorState get _navigator => _navigatorKey.currentState!;  
-  
+  @override
+  void initState() {
+    super.initState();
+    _appRouter = AppRouter(context.read<AuthenticationBloc>());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      builder: (context, child) {
-        return BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case AuthenticationStatus.authenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  HomePage.route(),
-                  (route) => false,
-                );
-              case AuthenticationStatus.unauthenticated:
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
-                  (route) => false,
-                );
-              case AuthenticationStatus.unknown:
-                break;
-            }
-          },
-          child: child
-        );
-      },
+    return MaterialApp.router(
+      routerConfig: _appRouter.router,
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -78,7 +48,6 @@ class _AppViewState extends State<AppView> {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateRoute: (_) => SplashPage.route(),
     );
   }
 }

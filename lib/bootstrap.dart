@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:careerquest_flutter/injection.dart';
+import 'package:careerquest_flutter/core/di/injection.dart';
+import 'package:careerquest_flutter/core/flavor/flavor.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,21 +24,27 @@ class AppBlocObserver extends BlocObserver {
   }
 }
 
-Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
+Future<void> bootstrap(
+  FutureOr<Widget> Function() builder,
+  AppFlavor flavor,
+) async {
   FlutterError.onError = (details) {
     log(details.exceptionAsString(), stackTrace: details.stack);
   };
 
   Bloc.observer = const AppBlocObserver();
 
-  await dotenv.load();
+  // Load environment variables for prod/staging
+  if (flavor != AppFlavor.development) {
+    await dotenv.load();
 
-  await Supabase.initialize(
-    url: dotenv.get('SUPABASE_URL'),
-    anonKey: dotenv.get('SUPABASE_PUBLISHABLE_KEY'),
-  );
+    await Supabase.initialize(
+      url: dotenv.get('SUPABASE_URL'),
+      anonKey: dotenv.get('SUPABASE_PUBLISHABLE_KEY'),
+    );
+  }
 
-  await configureDependencies();
+  await configureDependencies(environment: flavor.name);
 
   runApp(await builder());
 }

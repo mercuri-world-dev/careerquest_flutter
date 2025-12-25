@@ -22,14 +22,24 @@ dependencies:
   equatable: ^2.0.7
   injectable: ^2.7.1+2
   get_it: ^9.2.0
-  build_runner: ^2.10.4
+  go_router: ^17.0.1
+  dio: ^5.9.0
 
+  json_annotation: ^4.9.0
+  stream_transform: ^2.1.1
+  email_validator: ^2.1.17
+  rxdart: ^0.28.0
+ 
 dev_dependencies:
   bloc_lint: ^0.3.0
   bloc_test: ^10.0.0
+  build_runner: ^2.6.0
   flutter_test:
     sdk: flutter
+  injectable_generator: ^2.9.1
+  json_serializable: ^6.11.2
   mocktail: ^1.0.4
+
   very_good_analysis: ^10.0.0
 
 flutter:
