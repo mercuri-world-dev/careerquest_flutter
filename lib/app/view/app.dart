@@ -41,6 +41,7 @@ class _AppViewState extends State<AppView> {
     return MaterialApp.router(
       routerConfig: _appRouter.router,
       theme: ThemeData(
+        fontFamily: 'AlteHaasGroteskRegular',
         appBarTheme: AppBarTheme(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),

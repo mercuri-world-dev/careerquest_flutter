@@ -1,4 +1,6 @@
-import '../bloc/login_bloc.dart';
+import 'package:careerquest_flutter/core/theme/app_theme.dart';
+
+import 'package:careerquest_flutter/features/authentication/presentation/login/bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -19,15 +21,26 @@ class LoginForm extends StatelessWidget {
         }
       },
       child: Align(
-        alignment: const Alignment(0, -1 / 3),
+        alignment: Alignment.topLeft,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Text('Email Address:', style: AppTheme.label),
+            const SizedBox(height: 8),
             _EmailInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            const SizedBox(height: 20),
+            const Text('Password:', style: AppTheme.label),
+            const SizedBox(height: 8),
             _PasswordInput(),
-            const Padding(padding: EdgeInsets.all(12)),
-            _LoginButton(),
+            const SizedBox(height: 32),
+            Row(
+              children: [
+                _LoginButton(),
+                const SizedBox(width: 24),
+                const _GoogleButton(),
+              ],
+            ),
           ],
         ),
       ),
@@ -48,7 +61,20 @@ class _EmailInput extends StatelessWidget {
         context.read<LoginBloc>().add(LoginEmailChanged(email));
       },
       decoration: InputDecoration(
-        labelText: 'email',
+        filled: true,
+        fillColor: Colors.transparent,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.inputRadius),
+          borderSide: const BorderSide(color: AppTheme.darkBlue, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.inputRadius),
+          borderSide: const BorderSide(color: AppTheme.violet, width: 2),
+        ),
         errorText: displayError != null ? 'invalid email' : null,
       ),
     );
@@ -69,7 +95,20 @@ class _PasswordInput extends StatelessWidget {
       },
       obscureText: true,
       decoration: InputDecoration(
-        labelText: 'password',
+        filled: true,
+        fillColor: Colors.transparent,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.inputRadius),
+          borderSide: const BorderSide(color: AppTheme.darkBlue, width: 2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.inputRadius),
+          borderSide: const BorderSide(color: AppTheme.violet, width: 2),
+        ),
         errorText: displayError != null ? 'invalid password' : null,
       ),
     );
@@ -92,7 +131,47 @@ class _LoginButton extends StatelessWidget {
       onPressed: isValid
           ? () => context.read<LoginBloc>().add(const LoginSubmitted())
           : null,
-      child: const Text('Login'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppTheme.violet,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(46),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 14.0),
+        elevation: 0,
+      ),
+      child: const Text('Log in', style: TextStyle(fontSize: 18)),
+    );
+  }
+}
+
+class _GoogleButton extends StatelessWidget {
+  const _GoogleButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () {},
+      icon: const Image(
+        image: AssetImage(
+          'assets/images/features/authentication/google-logo.png',
+        ),
+        width: 24,
+        height: 24,
+      ),
+      label: const Text(
+        'Log in with Google',
+        style: TextStyle(color: Color(0xFF20316D)),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        elevation: 6,
+        shadowColor: Colors.black26,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(46),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      ),
     );
   }
 }
