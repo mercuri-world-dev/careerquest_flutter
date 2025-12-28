@@ -7,6 +7,7 @@ class AppTheme {
   static const Color darkBlue = Color(0xFF20316D);
   static const Color deepPurple = Color(0xFF442079);
   static const Color violet = Color(0xFF9E88E8);
+  static const Color darkViolet = Color(0xFF7113C9);
   static const Color cyanAccent = Color(0xFF88F9FF);
 
   // Card / panel
@@ -50,6 +51,7 @@ class CQColors {
   static const Color darkBlue = AppTheme.darkBlue;
   static const Color deepPurple = AppTheme.deepPurple;
   static const Color violet = AppTheme.violet;
+  static const Color darkViolet = AppTheme.darkViolet;
   static const Color cyanAccent = AppTheme.cyanAccent;
 
   static const Color cardGradientStart = AppTheme.cardGradientStart;

@@ -42,6 +42,12 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
         query: event.query,
         location: state.location,
         remote: state.isRemote,
+        jobType: state.jobType,
+        experienceLevel: state.experienceLevel,
+        minSalary: state.minSalary,
+        maxSalary: state.maxSalary,
+        industry: state.industry,
+        sortBy: state.sortBy,
       );
       emit(
         state.copyWith(
@@ -62,6 +68,12 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
       state.copyWith(
         location: event.location,
         isRemote: event.remote,
+        jobType: event.jobType,
+        experienceLevel: event.experienceLevel,
+        minSalary: event.minSalary,
+        maxSalary: event.maxSalary,
+        industry: event.industry,
+        sortBy: event.sortBy,
         status: JobSearchStatus.loading,
       ),
     );
@@ -71,6 +83,12 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
         query: state.query,
         location: state.location,
         remote: state.isRemote,
+        jobType: state.jobType,
+        experienceLevel: state.experienceLevel,
+        minSalary: state.minSalary,
+        maxSalary: state.maxSalary,
+        industry: state.industry,
+        sortBy: state.sortBy,
       );
       emit(
         state.copyWith(

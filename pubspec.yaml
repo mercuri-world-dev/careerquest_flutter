@@ -48,10 +48,21 @@ flutter:
   assets:
     - .env
     - assets/images/features/authentication/
+    
 fonts:
-- family: AlteHaasGrotesk
-  fonts:
-    - asset: fonts/AlteHaasGroteskRegular.ttf
-    - asset: fonts/AlteHaasGroteskBold.ttf
-      weight: 700
+  - family: AlteHaasGrotesk
+    fonts:
+      - asset: fonts/AlteHaasGroteskRegular.ttf
+      - asset: fonts/AlteHaasGroteskBold.ttf
+        weight: 700
+  - family: Alte_Haas_Grotesk
+    fonts:
+      - asset: fonts/Alte_Haas_Grotesk-Regular.ttf
+      - asset: fonts/Alte_Haas_Grotesk-Bold.ttf
+        weight: 700
+  - family: Futura_PT
+    fonts:
+      - asset: fonts/Futura_PT-Regular.ttf
+      - asset: fonts/Futura_PT-Bold.ttf
+        weight: 700
   

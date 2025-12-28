@@ -34,7 +34,6 @@ Future<void> bootstrap(
 
   Bloc.observer = const AppBlocObserver();
 
-  // Load environment variables for prod/staging
   if (flavor != AppFlavor.development) {
     await dotenv.load();
 

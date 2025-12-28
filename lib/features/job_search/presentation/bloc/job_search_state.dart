@@ -9,6 +9,12 @@ final class JobSearchState extends Equatable {
     this.query = '',
     this.location,
     this.isRemote = false,
+    this.jobType,
+    this.experienceLevel,
+    this.minSalary,
+    this.maxSalary,
+    this.industry,
+    this.sortBy,
   });
 
   final JobSearchStatus status;
@@ -16,6 +22,12 @@ final class JobSearchState extends Equatable {
   final String query;
   final String? location;
   final bool isRemote;
+  final String? jobType;
+  final String? experienceLevel;
+  final double? minSalary;
+  final double? maxSalary;
+  final String? industry;
+  final String? sortBy;
 
   JobSearchState copyWith({
     JobSearchStatus? status,
@@ -23,6 +35,12 @@ final class JobSearchState extends Equatable {
     String? query,
     String? location,
     bool? isRemote,
+    String? jobType,
+    String? experienceLevel,
+    double? minSalary,
+    double? maxSalary,
+    String? industry,
+    String? sortBy,
   }) {
     return JobSearchState(
       status: status ?? this.status,
@@ -30,9 +48,27 @@ final class JobSearchState extends Equatable {
       query: query ?? this.query,
       location: location ?? this.location,
       isRemote: isRemote ?? this.isRemote,
+      jobType: jobType ?? this.jobType,
+      experienceLevel: experienceLevel ?? this.experienceLevel,
+      minSalary: minSalary ?? this.minSalary,
+      maxSalary: maxSalary ?? this.maxSalary,
+      industry: industry ?? this.industry,
+      sortBy: sortBy ?? this.sortBy,
     );
   }
 
   @override
-  List<Object?> get props => [status, jobs, query, location, isRemote];
+  List<Object?> get props => [
+    status,
+    jobs,
+    query,
+    location,
+    isRemote,
+    jobType,
+    experienceLevel,
+    minSalary,
+    maxSalary,
+    industry,
+    sortBy,
+  ];
 }

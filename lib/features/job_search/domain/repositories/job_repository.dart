@@ -5,6 +5,12 @@ abstract interface class JobRepository {
     required String query,
     String? location,
     bool? remote,
+    String? jobType,
+    String? experienceLevel,
+    double? minSalary,
+    double? maxSalary,
+    String? industry,
+    String? sortBy,
     int? limit,
   });
 }
