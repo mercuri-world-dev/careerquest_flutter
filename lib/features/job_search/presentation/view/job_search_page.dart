@@ -25,21 +25,51 @@ class JobSearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SingleChildScrollView(
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                'images/features/job_search/jobs-background.png',
+              ),
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: const Center(child: _JobSearchPanel()),
+        ),
+      ),
+    );
+  }
+}
+
+class _JobSearchPanel extends StatelessWidget {
+  const _JobSearchPanel();
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    const gapSize = 30.0;
+
+    return SizedBox(
+      width: getAdaptiveDimension(screenSize.width, 0.8, 360, 1200),
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Column(
+        child: const Column(
           children: [
-            const _SearchBar(),
-            const SizedBox(height: 12),
+            _SearchBar(),
+            SizedBox(height: gapSize),
             Row(
-              children: const [
+              children: [
                 Flexible(flex: 2, child: _TitlePanel()),
                 SizedBox(width: 12),
                 Flexible(flex: 8, child: _FiltersPanel()),
               ],
             ),
-            const SizedBox(height: 12),
-            const Expanded(child: _ResultsSection()),
+            SizedBox(height: gapSize),
+            _ResultsSection(),
           ],
         ),
       ),
@@ -52,11 +82,8 @@ class _TitlePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final panelHeight = getAdaptiveDimension(screenSize.height, 0.2, 30, 90);
-
     return Container(
-      height: panelHeight,
+      height: 250,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topCenter,
@@ -70,7 +97,6 @@ class _TitlePanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Title uses display font (Futura_PT) at ~32 to match Figma
           Text(
             'Available Jobs',
             style: CQTypography.display.copyWith(
@@ -84,7 +110,7 @@ class _TitlePanel extends StatelessWidget {
             'Browse through our complete job listings',
             style: CQTypography.body.copyWith(
               fontSize: 15,
-              color: CQColors.white.withOpacity(0.9),
+              color: CQColors.white.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -194,22 +220,23 @@ class _FiltersPanelState extends State<_FiltersPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 250,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0x339CC8D6), Color(0x33D87CFF)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [CQColors.lightTeal, CQColors.tealyViolet],
         ),
         borderRadius: BorderRadius.circular(CQRadii.card),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Heading
           Padding(
-            padding: const EdgeInsets.only(right: 24.0, top: 6),
+            padding: const EdgeInsets.only(right: 24.0, top: 6, bottom: 12),
             child: Text(
               'Filters:',
               style: CQTypography.display.copyWith(fontSize: 32),
@@ -221,6 +248,7 @@ class _FiltersPanelState extends State<_FiltersPanel> {
             child: Column(
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _Pill(
                       child: TextField(
@@ -271,8 +299,9 @@ class _FiltersPanelState extends State<_FiltersPanel> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 36),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _Pill(
                       child: DropdownButtonHideUnderline(
@@ -319,10 +348,10 @@ class _FiltersPanelState extends State<_FiltersPanel> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Buttons: Filter + Refresh
                     ElevatedButton(
                       onPressed: _applyFilters,
                       style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(100, 40),
                         backgroundColor: CQColors.darkBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -334,15 +363,15 @@ class _FiltersPanelState extends State<_FiltersPanel> {
                       ),
                       child: const Text(
                         'Filter',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontSize: 16), // TODO: put in AppTheme
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 24),
                     GestureDetector(
                       onTap: _resetFilters,
                       child: Container(
-                        width: 36,
-                        height: 36,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           color: CQColors.violet,
                           shape: BoxShape.circle,
@@ -438,24 +467,112 @@ class _SearchBar extends StatelessWidget {
     );
   }
 }
-
-class _ResultsSection extends StatelessWidget {
+class _ResultsSection extends StatefulWidget {
   const _ResultsSection();
+
+  @override
+  State<_ResultsSection> createState() => _ResultsSectionState();
+}
+
+class _ResultsSectionState extends State<_ResultsSection> {
+
+  static const int jobBatch = 4;
+  int _shownCount = jobBatch;
+
+  @override
+  void didUpdateWidget(covariant _ResultsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reset shown count if jobs list changes (e.g., new search/filter)
+    final state = context.read<JobSearchBloc>().state;
+    if (_shownCount > state.jobs.length) {
+      setState(() {
+        _shownCount = jobBatch;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<JobSearchBloc>().state;
+    Widget content;
 
     if (state.status == JobSearchStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+      content = Center(child: CircularProgressIndicator());
+    } else if (state.status == JobSearchStatus.success) {
+      final sortedJobs = List.of(state.jobs)
+        ..sort((a, b) => (a.companyName ?? '').compareTo(b.companyName ?? ''));
 
-    if (state.status == JobSearchStatus.failure) {
-      return const Center(child: Text('Failed to load jobs'));
-    }
+      // Show first JOB_BATCH jobs by default, then more as user loads more
+      final jobsToShow = sortedJobs.take(_shownCount).toList();
 
-    if (state.status == JobSearchStatus.success && state.jobs.isEmpty) {
-      return const Center(child: Text('No jobs found'));
+      if (sortedJobs.isEmpty) {
+        content = const Center(
+          child: Text('No jobs found', style: TextStyle(color: CQColors.white),)
+          );
+      } else {  
+        content = LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            final columns = width >= CQBreakpoints.medium
+                ? 3
+                : width >= CQBreakpoints.small
+                ? 2
+                : 1;
+
+            return Column(
+              children: [
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: jobsToShow.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.86,
+                  ),
+                  itemBuilder: (context, index) {
+                    final job = jobsToShow[index];
+                    return JobCardV2(
+                      role: job.roleName,
+                      company: job.companyName,
+                      location: job.location ?? 'Unknown',
+                      industry: job.industry ?? '—',
+                      rate: '—', // TODO: add (approx.) job rates
+                      tags: const [], // TODO: add job tags
+                      onTap: () {},
+                    );
+                  },
+                ),
+                if (_shownCount < sortedJobs.length)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _shownCount = (_shownCount + jobBatch).clamp(0, sortedJobs.length);
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: CQColors.teal,
+                          foregroundColor: CQColors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(CQRadii.pill),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        ),
+                        child: const Text('Load More'),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      content = const Center(child: Text('Failed to load jobs'));
     }
 
     return Container(
@@ -473,76 +590,22 @@ class _ResultsSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recommended Jobs:',
+                // 'Recommended Jobs:',
+                'Results',
                 style: CQTypography.headingLarge.copyWith(
                   color: CQColors.white,
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [CQColors.violet, CQColors.darkViolet
-                  ]),
-                  borderRadius: BorderRadius.circular(CQRadii.pill)
-                ),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    foregroundColor: CQColors.white,
-                    shadowColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 8,
-                    ),
-                  ),
-                  child: const Text('Browse All'),
-                ),
-              )
             ],
           ),
           const SizedBox(height: 16),
 
-          // Grid of cards
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final width = constraints.maxWidth;
-              final columns = width >= CQBreakpoints.medium
-                  ? 3
-                  : width >= CQBreakpoints.small
-                  ? 2
-                  : 1;
-
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: state.jobs.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.86,
-                ),
-                itemBuilder: (context, index) {
-                  final job = state.jobs[index];
-                  return JobCardV2(
-                    role: job.roleName,
-                    company: job.companyName,
-                    location: job.location ?? 'Unknown',
-                    industry: job.industry ?? '—',
-                    rate: '—', // TODO: add (approx.) job rates
-                    tags: const [], // TODO: add job tags
-                    onTap: () {},
-                  );
-                },
-              );
-            },
-          ),
+          content,
         ],
       ),
     );
   }
-}
+    }
 
 class JobCardV2 extends StatelessWidget {
   const JobCardV2({
@@ -566,114 +629,213 @@ class JobCardV2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visibleTags = tags.length > 3 ? tags.take(3).toList() : tags;
+    final overflowCount = tags.length > 3 ? tags.length - 3 : 0;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(CQRadii.card),
         child: Container(
-          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: CQColors.white,
-            borderRadius: BorderRadius.circular(14),
+            gradient: CQGradients.card,
+            borderRadius: BorderRadius.circular(CQRadii.card),
             boxShadow: CQShadows.low,
           ),
-          child: Column(
+          child: Column( 
+            children: [ Expanded(child:Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: avatar & company
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: const BoxDecoration(
-                      color: CQColors.paleViolet,
-                      shape: BoxShape.circle,
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Avatar
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: const BoxDecoration(
+                        color: CQColors.paleViolet,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          company,
-                          style: CQTypography.headingMedium.copyWith(
-                            color: CQColors.darkBlue,
+                    const SizedBox(width: 16),
+                    // Main info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            company,
+                            style: CQTypography.headingMedium.copyWith(
+                              color: CQColors.darkBlue,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on, size: 18, color: CQColors.muted),
+                              const SizedBox(width: 4),
+                              Text(
+                                location,
+                                style: CQTypography.body.copyWith(color: CQColors.muted),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    // Polygon placeholder
+                    SizedBox(
+                      width: 64,
+                      height: 64,
+                      child: Center(child: Text('Polygon', style: CQTypography.label.copyWith(color: CQColors.muted))),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: 'Industry: ',
+                              style: CQTypography.label.copyWith(color: CQColors.darkBlue),
+                              children: [
+                                TextSpan(
+                                  text: industry,
+                                  style: CQTypography.body.copyWith(color: CQColors.darkBlue),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          RichText(
+                            text: TextSpan(
+                              text: 'Qualifications: ',
+                              style: CQTypography.label.copyWith(color: CQColors.darkBlue),
+                              children: [
+                                TextSpan(
+                                  text: 'see job details', // Replace with actual qualifications if available
+                                  style: CQTypography.body.copyWith(color: CQColors.darkBlue),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Application Period:',
+                            style: CQTypography.label.copyWith(color: CQColors.darkBlue),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: CQColors.violet.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(CQRadii.small),
+                                ),
+                                child: Text('2025/06/02', style: CQTypography.body.copyWith(color: CQColors.deepPurple)),
+                              ),
+                              const SizedBox(width: 8),
+                              Text('-', style: CQTypography.body.copyWith(color: CQColors.deepPurple)),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: CQColors.violet.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(CQRadii.small),
+                                ),
+                                child: Text('2025/09/19', style: CQTypography.body.copyWith(color: CQColors.deepPurple)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: [
+                    ...visibleTags.map((t) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: CQColors.paleViolet,
+                        borderRadius: BorderRadius.circular(CQRadii.pill),
+                      ),
+                      child: Text(t, style: CQTypography.body.copyWith(color: CQColors.darkBlue)),
+                    )),
+                    if (overflowCount > 0)
+                      GestureDetector(
+                        onTap: () {
+                          // TODO: Show overflow tags in a dialog or wrap below
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: CQColors.paleViolet,
+                            borderRadius: BorderRadius.circular(CQRadii.pill),
+                          ),
+                          child: Text('$overflowCount', style: CQTypography.body.copyWith(color: CQColors.darkBlue)),
                         ),
-                        const SizedBox(height: 6),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),]),),
+              Container(
+                decoration: const BoxDecoration(
+                  color: CQColors.teal,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(CQRadii.card),
+                    bottomRight: Radius.circular(CQRadii.card),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.access_time, color: CQColors.darkBlue, size: 24),
+                        const SizedBox(width: 8),
                         Text(
-                          location,
-                          style: CQTypography.body.copyWith(
-                            color: CQColors.muted,
-                          ),
+                          '$rate W/HR',
+                          style: CQTypography.headingMedium.copyWith(color: CQColors.darkBlue),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Body details
-              Text(
-                'Industry: $industry',
-                style: CQTypography.label.copyWith(color: CQColors.darkBlue),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Qualifications: see job details',
-                style: CQTypography.body.copyWith(color: CQColors.muted),
-              ),
-              const Spacer(),
-
-              // Tags and bottom bar
-              Wrap(
-                spacing: 8,
-                runSpacing: 6,
-                children: tags
-                    .take(3)
-                    .map(
-                      (t) => Chip(
-                        label: Text(
-                          t,
-                          style: CQTypography.body.copyWith(fontSize: 12),
+                    ElevatedButton(
+                      onPressed: onTap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: CQColors.white,
+                        foregroundColor: CQColors.deepPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(CQRadii.pill),
                         ),
-                        backgroundColor: CQColors.paleViolet,
-                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                        elevation: 0,
                       ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '$rate /HR',
-                    style: CQTypography.headingMedium.copyWith(
-                      color: CQColors.darkBlue,
+                      child: Text('Visit', style: CQTypography.button.copyWith(color: CQColors.deepPurple)),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: CQColors.cyanAccent,
-                      foregroundColor: CQColors.darkBlue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(CQRadii.pill),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
-                      ),
-                    ),
-                    child: const Text('Visit'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),

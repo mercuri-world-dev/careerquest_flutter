@@ -20,11 +20,27 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   JobSearchBloc({required JobRepository jobRepository})
     : _jobRepository = jobRepository,
       super(const JobSearchState()) {
+    on<JobSearchStarted>(_onStarted);
     on<JobSearchTermChanged>(
       _onTermChanged,
       transformer: debounce(_debounceDuration),
     );
     on<JobSearchFiltersChanged>(_onFiltersChanged);
+    // Dispatch initial load event
+    add(const JobSearchStarted());
+  }
+
+  Future<void> _onStarted(
+    JobSearchStarted event,
+    Emitter<JobSearchState> emit,
+  ) async {
+    emit(state.copyWith(status: JobSearchStatus.loading));
+    try {
+      final jobs = await _jobRepository.searchJobs(query: '', location: null, remote: null, jobType: null, experienceLevel: null, minSalary: null, maxSalary: null, industry: null, sortBy: null);
+      emit(state.copyWith(status: JobSearchStatus.success, jobs: jobs));
+    } catch (e) {
+      emit(state.copyWith(status: JobSearchStatus.failure));
+    }
   }
 
   final JobRepository _jobRepository;

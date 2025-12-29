@@ -1,4 +1,9 @@
+
 part of 'job_search_bloc.dart';
+
+final class JobSearchStarted extends JobSearchEvent {
+  const JobSearchStarted();
+}
 
 sealed class JobSearchEvent extends Equatable {
   const JobSearchEvent();
