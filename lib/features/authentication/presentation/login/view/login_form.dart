@@ -38,7 +38,7 @@ class LoginForm extends StatelessWidget {
               children: [
                 _LoginButton(),
                 const SizedBox(width: 24),
-                const _GoogleButton(),
+                // const _GoogleButton(),
               ],
             ),
           ],
