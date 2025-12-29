@@ -46,7 +46,7 @@ flutter:
   generate: true
   uses-material-design: true
   assets:
-    - .env
+    # - .env
     - assets/images/features/authentication/
 fonts:
 - family: AlteHaasGrotesk
