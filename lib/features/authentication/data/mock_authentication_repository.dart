@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+@staging
 @development
 @LazySingleton(as: AuthenticationRepository)
 class MockAuthenticationRepository implements AuthenticationRepository {

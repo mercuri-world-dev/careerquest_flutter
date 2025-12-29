@@ -3,6 +3,7 @@ import 'package:careerquest_flutter/features/profile/domain/entities/user_profil
 import 'package:careerquest_flutter/features/profile/domain/repositories/profile_repository.dart';
 import 'package:injectable/injectable.dart';
 
+@staging
 @development
 @LazySingleton(as: ProfileRepository)
 class MockProfileRepository implements ProfileRepository {

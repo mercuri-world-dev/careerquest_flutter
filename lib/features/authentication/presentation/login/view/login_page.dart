@@ -1,5 +1,6 @@
 import 'package:careerquest_flutter/core/di/injection.dart';
 import 'package:careerquest_flutter/core/theme/app_theme.dart';
+import 'package:careerquest_flutter/core/utils/sizing_utils.dart';
 
 import 'package:careerquest_flutter/features/authentication/presentation/login/bloc/login_bloc.dart';
 import 'package:careerquest_flutter/features/authentication/presentation/login/view/login_form.dart';
@@ -39,19 +40,9 @@ class _AuthPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final panelWidth = screenSize.width * 0.5 < 360.0
-        ? 360.0
-        : screenSize.width * 0.5 > 900.0
-        ? 900.0
-        : screenSize.width * 0.5;
-    final panelHeight = screenSize.height * 0.5 < 360.0
-        ? 360.0
-        : screenSize.height * 0.5 > 900.0
-        ? 900.0
-        : screenSize.height * 0.5;
     return SizedBox(
-      width: panelWidth,
-      height: panelHeight,
+      width: getAdaptiveDimension(screenSize.width, 0.5, 360, 900),
+      height: getAdaptiveDimension(screenSize.height, 0.5, 360, 900),
       child: Stack(
         children: [
           Container(

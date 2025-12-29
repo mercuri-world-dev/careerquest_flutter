@@ -6,7 +6,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 @production
-@staging
 @LazySingleton(as: AuthenticationRepository)
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
   AuthenticationRepositoryImpl(this._supabaseAuth);
