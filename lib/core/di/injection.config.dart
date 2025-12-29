@@ -47,9 +47,9 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
-const String _production = 'production';
 const String _staging = 'staging';
 const String _development = 'development';
+const String _production = 'production';
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -64,34 +64,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => thirdPartyModule.supabaseClient,
     );
     gh.lazySingleton<_i454.GoTrueClient>(() => thirdPartyModule.supabaseAuth);
-    gh.lazySingleton<_i751.JobSpyClient>(
-      () => _i751.JobSpyClient(gh<_i361.Dio>()),
-    );
-    gh.lazySingleton<_i252.UserRepository>(() => _i148.UserRepositoryImpl());
-    gh.lazySingleton<_i220.ProfileRepository>(
-      () => _i495.ProfileRepositoryImpl(gh<_i454.SupabaseClient>()),
-      registerFor: {_production, _staging},
-    );
-    gh.lazySingleton<_i1012.JobRepository>(
-      () => _i546.MockJobRepository(),
-      registerFor: {_development},
-    );
-    gh.lazySingleton<_i220.ProfileRepository>(
-      () => _i728.MockProfileRepository(),
-      registerFor: {_development},
-    );
-    gh.lazySingleton<_i1012.JobRepository>(
-      () => _i165.JobRepositoryImpl(gh<_i751.JobSpyClient>()),
-      registerFor: {_production, _staging},
-    );
     gh.lazySingleton<_i213.AuthenticationRepository>(
       () => _i689.MockAuthenticationRepository(),
-      registerFor: {_development},
+      registerFor: {_staging, _development},
       dispose: (i) => i.dispose(),
     );
     gh.lazySingleton<_i213.AuthenticationRepository>(
       () => _i625.AuthenticationRepositoryImpl(gh<_i454.GoTrueClient>()),
-      registerFor: {_production, _staging},
+      registerFor: {_production},
       dispose: (i) => i.dispose(),
     );
     gh.factory<_i27.AuthenticationBloc>(
@@ -104,8 +84,28 @@ extension GetItInjectableX on _i174.GetIt {
         authenticationRepository: gh<_i213.AuthenticationRepository>(),
       ),
     );
+    gh.lazySingleton<_i220.ProfileRepository>(
+      () => _i728.MockProfileRepository(),
+      registerFor: {_staging, _development},
+    );
+    gh.lazySingleton<_i751.JobSpyClient>(
+      () => _i751.JobSpyClient(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i252.UserRepository>(() => _i148.UserRepositoryImpl());
+    gh.lazySingleton<_i1012.JobRepository>(
+      () => _i546.MockJobRepository(),
+      registerFor: {_staging, _development},
+    );
+    gh.lazySingleton<_i1012.JobRepository>(
+      () => _i165.JobRepositoryImpl(gh<_i751.JobSpyClient>()),
+      registerFor: {_production},
+    );
     gh.factory<_i575.JobSearchBloc>(
       () => _i575.JobSearchBloc(jobRepository: gh<_i1012.JobRepository>()),
+    );
+    gh.lazySingleton<_i220.ProfileRepository>(
+      () => _i495.ProfileRepositoryImpl(gh<_i454.SupabaseClient>()),
+      registerFor: {_production},
     );
     gh.factory<_i200.ProfileBloc>(
       () => _i200.ProfileBloc(
