@@ -1,0 +1,26 @@
+[
+  {
+    "family": "FuturaPT",
+    "fonts": [
+      {
+        "asset": "fonts/FuturaPTBook.otf"
+      }
+    ]
+  },
+  {
+    "family": "AlteHaasGrotesk",
+    "fonts": [
+      {
+        "asset": "fonts/AlteHaasGroteskRegular.ttf"
+      }
+    ]
+  },
+  {
+    "family": "NotoSans",
+    "fonts": [
+      {
+        "asset": "fonts/NotoSans-VariableFont_wdth,wght.ttf"
+      }
+    ]
+  }
+]

@@ -5,7 +5,6 @@ import 'package:careerquest_flutter/core/di/injection.dart';
 import 'package:injectable/injectable.dart';
 
 @production
-@staging
 @LazySingleton(as: JobRepository)
 class JobRepositoryImpl implements JobRepository {
   JobRepositoryImpl(this._client);
@@ -17,6 +16,12 @@ class JobRepositoryImpl implements JobRepository {
     required String query,
     String? location,
     bool? remote,
+    String? jobType,
+    String? experienceLevel,
+    double? minSalary,
+    double? maxSalary,
+    String? industry,
+    String? sortBy,
     int? limit,
   }) async {
     try {
@@ -24,6 +29,12 @@ class JobRepositoryImpl implements JobRepository {
         'query': query,
         'location': location,
         'remote': remote,
+        'job_type': jobType,
+        'experience_level': experienceLevel,
+        'min_salary': minSalary,
+        'max_salary': maxSalary,
+        'industry': industry,
+        'sort_by': sortBy,
         'limit': limit,
       });
       return jobs;

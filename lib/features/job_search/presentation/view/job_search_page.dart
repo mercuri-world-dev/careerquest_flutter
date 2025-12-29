@@ -1,7 +1,15 @@
 import 'package:careerquest_flutter/core/di/injection.dart';
+import 'package:careerquest_flutter/core/theme/app_theme.dart';
+import 'package:careerquest_flutter/core/utils/sizing_utils.dart';
 import 'package:careerquest_flutter/features/job_search/presentation/bloc/job_search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'components/title_panel.dart';
+part 'components/filters_panel.dart';
+part 'components/search_bar.dart';
+part 'components/results_section.dart';
+part 'components/job_card.dart';
 
 class JobSearchPage extends StatelessWidget {
   const JobSearchPage({super.key});
@@ -23,96 +31,84 @@ class JobSearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Job Search')),
-      body: Column(
-        children: [
-          const _SearchBar(),
-          const _Filters(),
-          Expanded(child: _JobList()),
-        ],
-      ),
-    );
-  }
-}
-
-class _SearchBar extends StatelessWidget {
-  const _SearchBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: const InputDecoration(
-          labelText: 'Search Jobs',
-          border: OutlineInputBorder(),
-          prefixIcon: Icon(Icons.search),
+      body: SingleChildScrollView(
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                'images/features/job_search/jobs-background.png',
+              ),
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: const Center(child: _JobSearchPanel()),
         ),
-        onChanged: (value) {
-          context.read<JobSearchBloc>().add(JobSearchTermChanged(value));
-        },
       ),
     );
   }
 }
 
-class _Filters extends StatelessWidget {
-  const _Filters();
+class _JobSearchPanel extends StatelessWidget {
+  const _JobSearchPanel();
 
   @override
   Widget build(BuildContext context) {
-    final isRemote = context.select(
-      (JobSearchBloc bloc) => bloc.state.isRemote,
+    final screenSize = MediaQuery.of(context).size;
+    const gapSize = 30.0;
+
+    return SizedBox(
+      width: getAdaptiveDimension(screenSize.width, 0.8, 360, 1200),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: const Column(
+          children: [
+            _SearchBar(),
+            SizedBox(height: gapSize),
+            Row(
+              children: [
+                Flexible(flex: 2, child: _TitlePanel()),
+                SizedBox(width: 12),
+                Flexible(flex: 8, child: _FiltersPanel()),
+              ],
+            ),
+            SizedBox(height: gapSize),
+            _ResultsSection(),
+          ],
+        ),
+      ),
     );
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        children: [
-          FilterChip(
-            label: const Text('Remote Only'),
-            selected: isRemote,
-            onSelected: (selected) {
-              context.read<JobSearchBloc>().add(
-                JobSearchFiltersChanged(remote: selected),
-              );
-            },
+  }
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({required this.child, this.width = 187, super.key});
+
+  final Widget child;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: 40,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        gradient: CQGradients.card,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.25),
+            offset: Offset(0, 4),
+            blurRadius: 4,
           ),
         ],
       ),
+      alignment: Alignment.centerLeft,
+      child: child,
     );
   }
 }
 
-class _JobList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final state = context.watch<JobSearchBloc>().state;
-
-    if (state.status == JobSearchStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (state.status == JobSearchStatus.failure) {
-      return const Center(child: Text('Failed to load jobs'));
-    }
-
-    if (state.status == JobSearchStatus.success && state.jobs.isEmpty) {
-      return const Center(child: Text('No jobs found'));
-    }
-
-    return ListView.builder(
-      itemCount: state.jobs.length,
-      itemBuilder: (context, index) {
-        final job = state.jobs[index];
-        return ListTile(
-          title: Text(job.roleName),
-          subtitle: Text('${job.companyName} • ${job.location}'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () {
-            // TODO: Navigate to details
-          },
-        );
-      },
-    );
-  }
-}

@@ -3,6 +3,7 @@ import 'package:careerquest_flutter/features/job_search/domain/entities/job.dart
 import 'package:careerquest_flutter/features/job_search/domain/repositories/job_repository.dart';
 import 'package:injectable/injectable.dart';
 
+@staging
 @development
 @LazySingleton(as: JobRepository)
 class MockJobRepository implements JobRepository {
@@ -11,6 +12,12 @@ class MockJobRepository implements JobRepository {
     required String query,
     String? location,
     bool? remote,
+    String? jobType,
+    String? experienceLevel,
+    double? minSalary,
+    double? maxSalary,
+    String? industry,
+    String? sortBy,
     int? limit,
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 800));
@@ -54,14 +61,54 @@ class MockJobRepository implements JobRepository {
       ),
     ];
 
-    if (query.isEmpty) return allJobs;
+    var results = allJobs;
 
-    return allJobs
-        .where(
-          (job) =>
-              job.roleName.toLowerCase().contains(query.toLowerCase()) ||
-              job.companyName.toLowerCase().contains(query.toLowerCase()),
-        )
-        .toList();
+    if (query.isNotEmpty) {
+      results = results
+          .where(
+            (job) =>
+                job.roleName.toLowerCase().contains(query.toLowerCase()) ||
+                job.companyName.toLowerCase().contains(query.toLowerCase()),
+          )
+          .toList();
+    }
+
+    if (location != null && location.isNotEmpty) {
+      results = results
+          .where(
+            (j) =>
+                j.location != null &&
+                j.location!.toLowerCase().contains(location.toLowerCase()),
+          )
+          .toList();
+    }
+
+    if (remote != null) {
+      results = results.where((j) => j.isRemote == remote).toList();
+    }
+
+    if (jobType != null && jobType.isNotEmpty) {
+      results = results
+          .where(
+            (j) =>
+                j.jobType != null &&
+                j.jobType!.toLowerCase() == jobType.toLowerCase(),
+          )
+          .toList();
+    }
+
+    if (industry != null && industry.isNotEmpty) {
+      results = results
+          .where(
+            (j) =>
+                j.industry != null &&
+                j.industry!.toLowerCase().contains(industry.toLowerCase()),
+          )
+          .toList();
+    }
+
+    // minSalary/maxSalary filtering not implemented in mock (no salary data)
+
+    return results;
   }
 }
