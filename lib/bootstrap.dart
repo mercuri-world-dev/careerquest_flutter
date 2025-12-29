@@ -35,7 +35,7 @@ Future<void> bootstrap(
   Bloc.observer = const AppBlocObserver();
 
   // Load environment variables for prod/staging
-  if (flavor != AppFlavor.development) {
+  if (flavor == AppFlavor.production) {
     await dotenv.load();
 
     await Supabase.initialize(
