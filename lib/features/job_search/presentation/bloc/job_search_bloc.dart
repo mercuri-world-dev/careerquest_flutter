@@ -36,7 +36,17 @@ class JobSearchBloc extends Bloc<JobSearchEvent, JobSearchState> {
   ) async {
     emit(state.copyWith(status: JobSearchStatus.loading));
     try {
-      final jobs = await _jobRepository.searchJobs(query: '', location: null, remote: null, jobType: null, experienceLevel: null, minSalary: null, maxSalary: null, industry: null, sortBy: null);
+      final jobs = await _jobRepository.searchJobs(
+        query: '',
+        location: null,
+        remote: null,
+        jobType: null,
+        experienceLevel: null,
+        minSalary: null,
+        maxSalary: null,
+        industry: null,
+        sortBy: null,
+      );
       emit(state.copyWith(status: JobSearchStatus.success, jobs: jobs));
     } catch (e) {
       emit(state.copyWith(status: JobSearchStatus.failure));

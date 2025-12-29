@@ -3,12 +3,21 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
+  static const String displayFont = 'FuturaPT';
+  static const String uiFont = 'AlteHaasGrotesk';
+
   // Primary colors
   static const Color darkBlue = Color(0xFF20316D);
   static const Color deepPurple = Color(0xFF442079);
   static const Color violet = Color(0xFF9E88E8);
+  static const Color brightViolet = Color(0xFFD87CFF); // idek with these names
   static const Color darkViolet = Color(0xFF7113C9);
   static const Color cyanAccent = Color(0xFF88F9FF);
+
+  static const Color teal = Color(0xFF70D0B9);
+  static const Color lightTeal = Color(0xFF9CC8D6);
+  // result of 80% lerp from brightViolet to lightTeal; used in job search
+  static const Color tealyViolet = Color(0xFFa8b9de);
 
   // Card / panel
   static const Color cardGradientStart = Color(0xFFFFFFFF);
@@ -25,13 +34,19 @@ class AppTheme {
 
   // Text styles
   static const TextStyle titleLarge = TextStyle(
+    fontFamily: displayFont,
+    fontFamilyFallback: const ['NotoSans'],
+
     color: Colors.white,
     fontSize: 64,
-    fontWeight: FontWeight.w800,
+    fontWeight: FontWeight.w700,
     height: 1.0,
   );
 
   static const TextStyle label = TextStyle(
+    fontFamily: uiFont,
+    fontFamilyFallback: const ['NotoSans'],
+
     color: Color(0xFF20316D),
     fontSize: 16,
     fontWeight: FontWeight.w600,
@@ -51,8 +66,13 @@ class CQColors {
   static const Color darkBlue = AppTheme.darkBlue;
   static const Color deepPurple = AppTheme.deepPurple;
   static const Color violet = AppTheme.violet;
+  static const Color brightViolet = AppTheme.brightViolet;
   static const Color darkViolet = AppTheme.darkViolet;
   static const Color cyanAccent = AppTheme.cyanAccent;
+
+  static const Color teal = AppTheme.teal;
+  static const Color lightTeal = AppTheme.lightTeal;
+  static const Color tealyViolet = AppTheme.tealyViolet;
 
   static const Color cardGradientStart = AppTheme.cardGradientStart;
   static const Color cardGradientEnd = AppTheme.cardGradientEnd;
@@ -86,19 +106,21 @@ class CQGradients {
 class CQTypography {
   CQTypography._();
 
-  static const String displayFont = 'Futura_PT';
-  static const String uiFont = 'Alte_Haas_Grotesk';
+  static const String displayFont = 'FuturaPT';
+  static const String uiFont = 'AlteHaasGrotesk';
 
   static const TextStyle display = TextStyle(
     fontFamily: displayFont,
+    fontFamilyFallback: const ['NotoSans'],
     fontSize: 64,
-    fontWeight: FontWeight.w800,
+    fontWeight: FontWeight.w700,
     height: 1.0,
     color: CQColors.white,
   );
 
   static const TextStyle headingLarge = TextStyle(
     fontFamily: uiFont,
+    fontFamilyFallback: const ['NotoSans'],
     fontSize: 32,
     fontWeight: FontWeight.w700,
     color: CQColors.darkBlue,
@@ -106,6 +128,7 @@ class CQTypography {
 
   static const TextStyle headingMedium = TextStyle(
     fontFamily: uiFont,
+    fontFamilyFallback: const ['NotoSans'],
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: CQColors.darkBlue,
@@ -113,6 +136,7 @@ class CQTypography {
 
   static const TextStyle body = TextStyle(
     fontFamily: uiFont,
+    fontFamilyFallback: const ['NotoSans'],
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: CQColors.darkBlue,
@@ -120,6 +144,7 @@ class CQTypography {
 
   static const TextStyle label = TextStyle(
     fontFamily: uiFont,
+    fontFamilyFallback: const ['NotoSans'],
     fontSize: 14,
     fontWeight: FontWeight.w600,
     color: CQColors.darkBlue,
@@ -127,6 +152,7 @@ class CQTypography {
 
   static const TextStyle button = TextStyle(
     fontFamily: uiFont,
+    fontFamilyFallback: const ['NotoSans'],
     fontSize: 16,
     fontWeight: FontWeight.w700,
     color: CQColors.white,

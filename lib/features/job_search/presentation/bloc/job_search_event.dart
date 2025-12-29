@@ -1,4 +1,3 @@
-
 part of 'job_search_bloc.dart';
 
 final class JobSearchStarted extends JobSearchEvent {
