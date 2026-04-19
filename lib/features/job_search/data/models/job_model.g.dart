@@ -24,9 +24,7 @@ JobModel _$JobModelFromJson(Map<String, dynamic> json) => JobModel(
   maxAmount: (json['max_amount'] as num?)?.toDouble(),
   currency: json['currency'] as String?,
   salarySource: json['salary_source'] as String?,
-  datePosted: json['date_posted'] == null
-      ? null
-      : DateTime.parse(json['date_posted'] as String),
+  datePosted: const _DateTimeConverter().fromJson(json['date_posted']),
   emails: (json['emails'] as List<dynamic>?)?.map((e) => e as String).toList(),
   jobLevel: json['job_level'] as String?,
   skills: json['skills'] as String?,
@@ -52,10 +50,10 @@ Map<String, dynamic> _$JobModelToJson(JobModel instance) => <String, dynamic>{
   'max_amount': instance.maxAmount,
   'currency': instance.currency,
   'salary_source': instance.salarySource,
-  'date_posted': instance.datePosted?.toIso8601String(),
   'emails': instance.emails,
   'job_level': instance.jobLevel,
   'skills': instance.skills,
   'experience_range': instance.experienceRange,
   'additional_fields': instance.additionalFields,
+  'date_posted': const _DateTimeConverter().toJson(instance.datePosted),
 };

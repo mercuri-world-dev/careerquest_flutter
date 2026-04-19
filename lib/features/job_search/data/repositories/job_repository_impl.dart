@@ -5,6 +5,7 @@ import 'package:careerquest_flutter/core/di/injection.dart';
 import 'package:injectable/injectable.dart';
 
 @production
+@staging
 @LazySingleton(as: JobRepository)
 class JobRepositoryImpl implements JobRepository {
   JobRepositoryImpl(this._client);

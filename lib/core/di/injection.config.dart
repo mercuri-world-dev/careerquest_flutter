@@ -94,14 +94,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i252.UserRepository>(() => _i148.UserRepositoryImpl());
     gh.lazySingleton<_i1012.JobRepository>(
       () => _i546.MockJobRepository(),
-      registerFor: {_staging, _development},
-    );
-    gh.lazySingleton<_i1012.JobRepository>(
-      () => _i165.JobRepositoryImpl(gh<_i751.JobSpyClient>()),
-      registerFor: {_production},
-    );
-    gh.factory<_i575.JobSearchBloc>(
-      () => _i575.JobSearchBloc(jobRepository: gh<_i1012.JobRepository>()),
+      registerFor: {_development},
     );
     gh.lazySingleton<_i220.ProfileRepository>(
       () => _i495.ProfileRepositoryImpl(gh<_i454.SupabaseClient>()),
@@ -112,6 +105,13 @@ extension GetItInjectableX on _i174.GetIt {
         profileRepository: gh<_i220.ProfileRepository>(),
         authenticationRepository: gh<_i213.AuthenticationRepository>(),
       ),
+    );
+    gh.lazySingleton<_i1012.JobRepository>(
+      () => _i165.JobRepositoryImpl(gh<_i751.JobSpyClient>()),
+      registerFor: {_production, _staging},
+    );
+    gh.factory<_i575.JobSearchBloc>(
+      () => _i575.JobSearchBloc(jobRepository: gh<_i1012.JobRepository>()),
     );
     return this;
   }

@@ -3,7 +3,6 @@ import 'package:careerquest_flutter/features/job_search/domain/entities/job.dart
 import 'package:careerquest_flutter/features/job_search/domain/repositories/job_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@staging
 @development
 @LazySingleton(as: JobRepository)
 class MockJobRepository implements JobRepository {
