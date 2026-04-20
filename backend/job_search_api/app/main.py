@@ -40,7 +40,7 @@ class JobSearchRequest(BaseModel):
 
 
 def _sites() -> list[str]:
-    raw = os.getenv("JOBSPY_SITES", "indeed")
+    raw = os.getenv("JOBSPY_SITES", "linkedin")
     return [s.strip() for s in raw.split(",") if s.strip()]
 
 

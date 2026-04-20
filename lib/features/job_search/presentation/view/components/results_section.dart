@@ -23,6 +23,21 @@ class _ResultsSectionState extends State<_ResultsSection> {
     }
   }
 
+  String _profileDescription(UserProfile? p) {
+    if (p == null) return '';
+    final parts = <String>[];
+    parts.add('Age range: ${p.ageRange}');
+    if (p.hoursPerWeek != null) parts.add('Hours/week: ${p.hoursPerWeek}');
+    if (p.location != null) parts.add('Location: ${p.location}');
+    if (p.accommodations != null && p.accommodations!.isNotEmpty) {
+      parts.add('Accommodations: ${p.accommodations!.join(', ')}');
+    }
+    if (p.educationalBackground != null) parts.add('Education: ${p.educationalBackground}');
+    if (p.remotePreference != null) parts.add('Remote preference: ${p.remotePreference! ? 'remote' : 'not remote'}');
+    // REPLACE WITH REAL PROFILE
+    return parts.join('. ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<JobSearchBloc>().state;
@@ -56,29 +71,49 @@ class _ResultsSectionState extends State<_ResultsSection> {
 
             return Column(
               children: [
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: jobsToShow.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.86,
+                FutureBuilder<UserProfile?>(
+                  future: getIt<ProfileRepository>().getUserProfile('mock-user-id'),
+                  builder: (context, snapshot) {
+                    final profile = snapshot.data;
+                    final userDesc = _profileDescription(profile);
+
+                    return BlocProvider(
+                      create: (context) => JobCompatibilityBloc(repository: getIt<CompatibilityRepository>())
+                        ..add(FetchCompatibility(userProfile: userDesc, jobs: jobsToShow)),
+                      child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: jobsToShow.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.86,
+                    ),
+                    itemBuilder: (context, index) {
+                      final job = jobsToShow[index];
+                      double? score;
+                      try {
+                        final compatBloc = context.read<JobCompatibilityBloc>();
+                        final compatState = compatBloc.state;
+                        score = compatState.scores[job.id];
+                      } catch (_) {
+                        score = null;
+                      }
+
+                      return JobCard(
+                        role: job.roleName,
+                        company: job.companyName,
+                        location: job.location ?? 'Unknown',
+                        industry: job.industry ?? '—',
+                        rate: '—', // TODO: add (approx.) job rates
+                        tags: const [], // TODO: add job tags
+                        onTap: () {},
+                        compatibility: score,
+                      );
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    final job = jobsToShow[index];
-                    return JobCard(
-                      role: job.roleName,
-                      company: job.companyName,
-                      location: job.location ?? 'Unknown',
-                      industry: job.industry ?? '—',
-                      rate: '—', // TODO: add (approx.) job rates
-                      tags: const [], // TODO: add job tags
-                      onTap: () {},
-                    );
-                  },
-                ),
+                );}),
                 if (_shownCount < sortedJobs.length)
                   Padding(
                     padding: const EdgeInsets.only(top: 24),

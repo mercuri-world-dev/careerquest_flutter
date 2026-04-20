@@ -9,6 +9,7 @@ class JobCard extends StatelessWidget {
     required this.rate,
     required this.tags,
     this.onTap,
+    this.compatibility,
     super.key,
   });
 
@@ -19,6 +20,7 @@ class JobCard extends StatelessWidget {
   final String rate;
   final List<String> tags;
   final VoidCallback? onTap;
+  final double? compatibility;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,20 @@ class JobCard extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          // Compatibility badge
+                          if (compatibility != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: CQColors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${(compatibility! * 100).toStringAsFixed(0)}%',
+                                style: CQTypography.label.copyWith(color: CQColors.deepPurple),
+                              ),
+                            ),
                           const SizedBox(width: 16),
                           // Main info
                           Expanded(

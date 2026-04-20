@@ -2,6 +2,10 @@ import 'package:careerquest_flutter/core/di/injection.dart';
 import 'package:careerquest_flutter/core/theme/app_theme.dart';
 import 'package:careerquest_flutter/core/utils/sizing_utils.dart';
 import 'package:careerquest_flutter/features/job_search/presentation/bloc/job_search_bloc.dart';
+import 'package:careerquest_flutter/features/job_search/presentation/bloc/job_compatibility_bloc.dart';
+import 'package:careerquest_flutter/features/job_search/domain/repositories/compatibility_repository.dart';
+import 'package:careerquest_flutter/features/profile/domain/repositories/profile_repository.dart';
+import 'package:careerquest_flutter/features/profile/domain/entities/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
